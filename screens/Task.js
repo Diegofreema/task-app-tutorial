@@ -51,7 +51,11 @@ const Task = () => {
           table: 'tasks',
           filter: `category=eq.${selected}`,
         },
-        ({ new: newTask }) => {
+        ({ new: newTask, eventType, old: oldTask }) => {
+          if (eventType === 'DELETE') {
+            const deletedTasks = tasks.filter((task) => task.id !== oldTask.id);
+            return setTasks(deletedTasks);
+          }
           const index = tasks.findIndex((task) => task.id === newTask.id);
           if (index !== -1) {
             const updatedItems = tasks.slice();

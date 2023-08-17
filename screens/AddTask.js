@@ -1,12 +1,12 @@
 import { StyleSheet, Pressable } from 'react-native';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, HStack, Icon, ScrollView, Text, View } from 'native-base';
 import { EvilIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useMutation } from 'react-query';
-import Toast from 'react-native-toast-message';
-import moment from 'moment';
 
+import Toast from 'react-native-toast-message';
+
+import { format, isBefore, parseISO } from 'date-fns';
 import TitleComponent from '../components/TitleComponent';
 import { colors } from '../constants/color';
 import InputComponent from '../components/InputComponent';
@@ -51,9 +51,9 @@ const AddTask = ({ navigation }) => {
       });
       return setLoading(false);
     }
-    const deadlineFormatted = moment(deadline).format('DD-MM-YYYY');
-    const today = moment(new Date()).format('DD-MM-YYYY');
-    if (moment(deadlineFormatted).isBefore(today)) {
+    const deadlineFormatted = parseISO(format(deadline, 'y-MM-dd'));
+    const today = parseISO(format(new Date(), 'y-MM-dd'));
+    if (isBefore(deadlineFormatted, today)) {
       Toast.show({
         type: 'error',
         text1: 'Please enter a future date!!',
@@ -116,7 +116,7 @@ const AddTask = ({ navigation }) => {
             <Pressable onPress={showDatePicker} style={styles.deadline}>
               <HStack alignItems={'center'}>
                 <Icon as={EvilIcons} name="calendar" size={30} />
-                <Text>{moment(deadline).format('L')}</Text>
+                <Text>{format(deadline, 'y-MM-dd')}</Text>
               </HStack>
             </Pressable>
             {open && (

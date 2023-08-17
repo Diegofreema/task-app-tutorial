@@ -36,7 +36,7 @@ const Welcome = ({ navigation }) => {
             Login
           </Button>
           <Button
-            backgroundColor={colors.btnColorBlue}
+            backgroundColor={'#4681A3'}
             onPress={navigateToSignUp}
             rounded={'md'}
           >

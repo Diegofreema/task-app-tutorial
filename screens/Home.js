@@ -1,13 +1,13 @@
 import { StyleSheet, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Box, HStack, Spinner, Text, View } from 'native-base';
-import moment from 'moment';
 
 import { supabase } from '../lib/supabase';
-
+import moment from 'moment';
 import TitleComponent from '../components/TitleComponent';
 import { colors } from '../constants/color';
 import FloatingButton from '../components/FloatinButton';
+import { format, parseISO, isEqual, isBefore } from 'date-fns';
 
 const Home = ({ navigation }) => {
   const [tasks, setTasks] = useState([]);
@@ -20,9 +20,10 @@ const Home = ({ navigation }) => {
   const lowPriority = tasks?.filter((task) => task.category === 'nice to do');
 
   const dueDeadline = tasks?.filter((task) => {
-    const formattedDeadline = moment(task.deadline).format('DD-MM-YYYY');
-    const now = moment(new Date()).format('DD-MM-YYYY');
-    moment(formattedDeadline).isSameOrAfter(now);
+    const deadline = moment(task.deadline).format('YYYY-MM-DD');
+    const today = moment().format('YYYY-MM-DD');
+    const isDue = moment(deadline).isSameOrBefore(today);
+    return isDue;
   });
 
   const feedback = [
@@ -33,9 +34,10 @@ const Home = ({ navigation }) => {
     },
     {
       id: 2,
-      title: 'Due Deadline',
+      title: 'High Priority',
       count: dueDeadline.length,
     },
+
     {
       id: 3,
       title: 'Low Priority',
@@ -86,7 +88,7 @@ const Home = ({ navigation }) => {
     };
     getCurrentUser();
   }, []);
-  const box = new Array(3).fill('');
+
   if (loading) {
     return <Spinner />;
   }
